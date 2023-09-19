@@ -71,7 +71,7 @@
             {% if user.is_authenticated %}
             <div class="main-content-btns">
                 <div class="create-playlist-btn tooltip-container">
-                    <button id="create-playlist" onClick="showCreatingNewPlaylistModal()">
+                    <button id="create-playlist" onclick="showCreatingNewPlaylistModal()">
                         <i class="fas fa-save"></i>
                     </button>
                     <span class="tooltip-text">Create new Playlist</span>
@@ -142,6 +142,6 @@
 
 <!-- Video Stream Merger JavaScript -->
 <script src="{% static '/js/dist/video-stream-merger.js' %}"></script>
-<script src="{% static '/js/utils.js' %}"></script>
+<!-- <script src="{% static '/js/utils.js' %}"></script> -->
 <script src="{% static '/js/index.js' %}"></script>
 {% endblock body %}
