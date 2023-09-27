@@ -101,6 +101,13 @@ let minuteTime = document.querySelector(".minute-time")
 let secondTime = document.querySelector(".second-time")
 let timeInterval;
 let totalTime = 0;
+// navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+//   .then(function (stream) {
+//     console.log('Got stream, time diff :', Date.now() - now);
+//   })
+//   .catch(function (err) {
+//     console.log('GUM failed with error, time diff: ', Date.now() - now);
+//   });
 
 $(document).ready(() => {
   if ((window.location.pathname === '/') && isAuthenticated) {
@@ -119,7 +126,6 @@ $(document).ready(() => {
       }
     });
   }
-
   if ((window.location.pathname === '/library/') && isAuthenticated) {
     let selected_Video_Id = null; // DONT DELETE!!!, this variable is used to declare selected_Video -id
     load_gallery();
@@ -272,25 +278,24 @@ async function showAudioModal() {
   }
   await microphoneStatus()
 }
-document.getElementById('closeAudioModal').addEventListener('click', () => audioCheckbox.checked = false);
-document.getElementById('choose-audio').addEventListener('click', () => {
-  const audioSourceSelect = document.getElementById('audio-source');
-  const selectedValue = audioSourceSelect.value;
+// document.getElementById('closeAudioModal').addEventListener('click', () => audioCheckbox.checked = false);
+// document.getElementById('choose-audio').addEventListener('click', () => {
+//   const audioSourceSelect = document.getElementById('audio-source');
+//   const selectedValue = audioSourceSelect.value;
 
-  if (selectedValue !== '') {
-    audioCheckbox.checked = true;
-  }
-});
+//   if (selectedValue) {
+//     audioCheckbox.checked = true;
+//   }
+// });
 
-document.getElementById('closecameraModal').addEventListener('click', () => cameraCheckbox.checked = false);
-document.getElementById('choose-camera').addEventListener('click', () => {
-  const videoSourceSelect = document.getElementById('video-source');
-  const selectedValue = videoSourceSelect.value;
-
-  if (selectedValue !== '') {
-    cameraCheckbox.checked = true;
-  }
-});
+// document.getElementById('closecameraModal').addEventListener('click', () => cameraCheckbox.checked = false);
+// document.getElementById('choose-camera').addEventListener('click', () => {
+//   const videoSourceSelect = document.getElementById('video-source');
+//   const selectedValue = videoSourceSelect.value;
+//   if (selectedValue) {
+//     cameraCheckbox.checked = true;
+//   }
+// });
 /**
  * Gets the webcam stream based on the provided media constraints.
  * Sets the stream as the source for the HTML video element.
@@ -893,25 +898,15 @@ async function validateAll() {
  * Validates the modal inputs for test details.
 * If all inputs are valid, it disables the start recording button, sets the video privacy status, and starts the recording.
 */
-let timeout;
-function validateTextDisappear(){
-  timeout = setTimeout(validateModal, 2000)
-}
 
 // hide errors on typing
-let hideTestNameError = document.querySelector("#test-name")
-hideTestNameError.addEventListener("onkeydown", function(){
+function hideTestNameError(){
   document.querySelector("#test-name-error").innerHTML = ""
-})
-
-let hideChannelError = document.querySelector("#selectChannel")
-hideChannelError.addEventListener("onkeydown", function(){
-  document.querySelector("#channelname-error").innerHTML = ""
-})
-let hidePlaylistError = document.querySelector("#selectPlaylist")
-hidePlaylistError.addEventListener("onchange", function(){
+}
+function hidePlaylistError(){
   document.querySelector("#playlist-error").innerHTML = ""
-})
+}
+
 
 async function validateModal() {
   // Get permission to show notifications in system tray
@@ -2325,6 +2320,9 @@ function displayUtilities() {
   document.querySelector('#public-videos').disabled = true;
   document.querySelector('#private-videos').disabled = true;
   document.querySelector('#unlisted-videos').disabled = true;
+  document.querySelector('#audio-settings').disabled = true;
+  // document.querySelector('#screen-recording').disabled = true;
+  document.querySelector('#webcam-recording').disabled = true;
 
   // clear navbar forms
   // Enable share records button
@@ -2371,7 +2369,7 @@ async function fetchUserChannel() {
       channelSelect.append(opt);
     });
 
-    // Set the initial value for channelSelect
+    // Set the initial value for channelSelect.
     if (userChannels.length > 0) {
       channelSelect.value = userChannels[0].channel_title;
       channelSelect.name = userChannels[0].channel_title;
@@ -2381,7 +2379,6 @@ async function fetchUserChannel() {
   } catch (error) {
     console.error(error);
     const statusBar = document.getElementById("app-status");
-    const channelSelect = document.getElementById("your-channel-select");
 
     if (error.message === 'Unauthorized') {
       statusBar.innerHTML = 'ERROR: Account is not a Google account';
