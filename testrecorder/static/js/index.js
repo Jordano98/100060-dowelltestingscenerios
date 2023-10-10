@@ -187,6 +187,18 @@ function calcTime(val) {
     return valString;
   }
 }
+// let publicChecked = publicVideosCheckbox.checked;
+// let privateChecked = privateVideosCheckbox.checked;
+// let unlistedChecked = unlistedVideosCheckbox.checked;
+// if (publicChecked==false && privateChecked==false) {
+//   unlistedChecked == true
+// }
+// if (publicChecked == false && unlistedChecked ==false) {
+//   privateChecked == true
+// }
+// if (publicChecked == false && unlistedChecked ==false) {
+//   privateChecked == true
+// }
 // diasble private if public is checked
 function disablePrivandUnlist() {
   let publicChecked = publicVideosCheckbox.checked;
@@ -202,6 +214,11 @@ function disablePrivandUnlist() {
       unlistedVideosCheckbox.click()
     }
   }
+  if (publicChecked == false && privateChecked == false) {
+    unlistedChecked == true
+    unlistedVideosCheckbox.click()
+  }
+  
 }
 // diasble public if unlist is checked
 function disablePublicandUnlist() {
@@ -217,6 +234,10 @@ function disablePublicandUnlist() {
     if (unlistedChecked == true) {
       unlistedVideosCheckbox.click()
     }
+  } 
+  if (privateChecked == false && unlistedChecked == false) {
+    publicChecked == true
+    publicVideosCheckbox.click()
   }
 }
 
@@ -234,6 +255,10 @@ function disablePubandPriv() {
     if (privateChecked == true) {
       privateVideosCheckbox.click()
     }
+  } 
+  if (unlistedChecked == false && publicChecked == false) {
+    privateChecked == true
+    privateVideosCheckbox.click()
   }
 }
 
@@ -961,13 +986,13 @@ async function validateModal() {
   let testNameErrorMsg = "";
 
   if (testNameValue === "") {
-    testNameErrorMsg = "Please fill in the test name";
+    testNameErrorMsg = "Please fill in the video title";
     testNameIsValid = false;
   }
 
   // Check if test name starts with a number
   if (testNameValue.match(/^\d/)) {
-    testNameErrorMsg = "Test name cannot start with a number";
+    testNameErrorMsg = "Video title cannot start with a number";
     testNameIsValid = false;
   }
 
@@ -998,6 +1023,9 @@ async function sendAvailableData() {
   try {
     let status = document.getElementById("app-status");
     document.querySelector('.record-btn').style.display = 'block';
+    document.querySelector('.library-btn').style.display = 'block';
+    // show create playlist btn
+    document.querySelector('.create-playlist-btn').style.display = 'block';
     document.querySelector('.stop-btn').style.display = 'none';
     document.querySelector(".video-title").innerHTML = "";
 
@@ -1915,7 +1943,10 @@ async function resetStateOnClosingPlaylistModal() {
 
   // show record button
   document.querySelector('.record-btn').style.display = 'block';
-
+  // show library btn
+  document.querySelector('.library-btn').style.display = 'block';
+  // show create playlist btn
+  document.querySelector('.create-playlist-btn').style.display = 'block';
   // Stop the webcam stream
   if (recordWebcam == true) {
     try {
@@ -2308,8 +2339,12 @@ function displayUtilities() {
 
   // show stop button
   document.querySelector('.record-btn').style.display = 'none';
-  // disable playlist button
-  document.querySelector('#create-playlist').disabled = true;
+  // hide library btn
+  document.querySelector('.library-btn').style.display = 'none';
+  // hide create playlist btn
+  document.querySelector('.create-playlist-btn').style.display = 'none';
+  // disable playlist button /********* create playlist btn already hidden ********/
+  // document.querySelector('#create-playlist').disabled = true;
   // disable channel button
   // document.querySelector('#view_records').disabled = true;
   document.querySelector('#selectChannel').disabled = true;
@@ -2609,6 +2644,9 @@ function resetonStartRecording() {
   document.querySelector('#public-videos').disabled = false;
   document.querySelector('#private-videos').disabled = false;
   document.querySelector('#unlisted-videos').disabled = false;
+  document.querySelector('.library-btn').style.display = 'block';
+  // hide create playlist btn
+  document.querySelector('.create-playlist-btn').style.display = 'block';
 
 }
 
