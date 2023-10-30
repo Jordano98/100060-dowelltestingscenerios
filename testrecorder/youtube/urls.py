@@ -27,6 +27,6 @@ urlpatterns = [
     path('fetchlibraryplaylists/api/', FetchlibraryPlaylists.as_view(), name='fetchlibrary-playlists'),
     path('videos/api/<str:playlistId>/', SelectedPlaylistLoadVideo.as_view(), name='videos_from_playlistId'),
     path('videos/api/rate/<str:videoId>/', RateVideoView.as_view(), name='rate_video'),
-    path('videos/api/delete_video/<str:playlistitem_id>/', Delete_video.as_view(), name='delete_video'),  # delete video by id
+    path('videos/api/delete_video/<str:playlistitem_id>/', Delete_video.as_view(), name='delete_video'),  # delete video From Playlist by id
 
 ]

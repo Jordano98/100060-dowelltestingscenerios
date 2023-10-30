@@ -324,8 +324,6 @@ class Delete_video(APIView):
                 id=playlistitem_id
             ).execute()
 
-            print(response)
-
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Exception as e:
