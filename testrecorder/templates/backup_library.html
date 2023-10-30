@@ -1,0 +1,122 @@
+{% extends 'library_base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+  body {
+    background-color: #dfdfdf;
+  }
+
+  .lower-nav h1 {
+    color: white;
+  }
+</style>
+{% endblock css %}
+
+{% block title %}
+<title>Library</title>
+{% endblock title %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-9">
+      <!-- Content for div 1 -->
+      <div class="bg-info p-3">
+
+          <!-- YouTube IPlayer -->
+            <div class="player" id="youtube_player">
+               <iframe src="https://www.youtube.com/embed/Iv8mg2iFWYA" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+          <!-- Title -->
+      <div>
+          <h1 class="fs-4 fw-bold" >About DoWell UX Living Lab</h1>
+          <!-- Media Object -->
+
+          <div class="media   align-items-center">
+
+{#            <img class="img-profile media-figure" src="https://yt3.ggpht.com/-UbUyULJMBoM/AAAAAAAAAAI/AAAAAAAAAAA/LGD8KPvBEdc/s88-c-k-no/photo.jpg" alt="">#}
+            <img class="img-profile media-figure" src="https://yt3.ggpht.com/ytc/APkrFKZXQA_NYMO_UZLLp282-49JTY7TgJ7iajU-bCbH=s88-c-k-c0x00ffffff-no-rj" alt="">
+
+            <div class="media-body py-2">
+
+              <h3 class="fs-5" id="channelName">DoWell Research</h3>
+
+              <div class="subscribe">
+                <span class="subscribe-count">9.7K...</span> &nbsp;&nbsp;
+                <span class="subscribe-count">186 <br>subscribers</span> &nbsp;&nbsp;
+                  <h6 id="playingvideo_privacy">Playlist : General</h6>
+              </div>
+
+            </div>
+
+            <div class=" p-2 d-flex">
+
+                <div class="btn-group me-2 " role="group" id="thumb_like">
+                    <h6 id="video_likecount">Likes: <span id="likeCountValue"></span></h6>
+                    <h6 id="video_views">Views: <span id="video_viewCounts"></span></h6>
+
+                    <button type="button" class="btn btn-btn-light" id="thumb_dislike"  onclick="rateVideo('dislike', '{{ videoId }}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-down" viewBox="0 0 16 16">
+                            <path d="M8.864 15.674c-.956.24-1.843-.484-1.908-1.42-.072-1.05-.23-2.015-.428-2.59-.125-.36-.479-1.012-1.04-1.638-.557-.624-1.282-1.179-2.131-1.41C2.685 8.432 2 7.85 2 7V3c0-.845.682-1.464 1.448-1.546 1.07-.113 1.564-.415 2.068-.723l.048-.029c.272-.166.578-.349.97-.484C6.931.08 7.395 0 8 0h3.5c.937 0 1.599.478 1.934 1.064.164.287.254.607.254.913 0 .152-.023.312-.077.464.201.262.38.577.488.9.11.33.172.762.004 1.15.069.13.12.268.159.403.077.27.113.567.113.856 0 .289-.036.586-.113.856-.035.12-.08.244-.138.363.394.571.418 1.2.234 1.733-.206.592-.682 1.1-1.2 1.272-.847.283-1.803.276-2.516.211a9.877 9.877 0 0 1-.443-.05 9.364 9.364 0 0 1-.062 4.51c-.138.508-.55.848-1.012.964l-.261.065zM11.5 1H8c-.51 0-.863.068-1.14.163-.281.097-.506.229-.776.393l-.04.025c-.555.338-1.198.73-2.49.868-.333.035-.554.29-.554.55V7c0 .255.226.543.62.65 1.095.3 1.977.997 2.614 1.709.635.71 1.064 1.475 1.238 1.977.243.7.407 1.768.482 2.85.025.362.36.595.667.518l.262-.065c.16-.04.258-.144.288-.255a8.34 8.34 0 0 0-.145-4.726.5.5 0 0 1 .595-.643h.003l.014.004.058.013a8.912 8.912 0 0 0 1.036.157c.663.06 1.457.054 2.11-.163.175-.059.45-.301.57-.651.107-.308.087-.67-.266-1.021L12.793 7l.353-.354c.043-.042.105-.14.154-.315.048-.167.075-.37.075-.581 0-.211-.027-.414-.075-.581-.05-.174-.111-.273-.154-.315l-.353-.354.353-.354c.047-.047.109-.176.005-.488a2.224 2.224 0 0 0-.505-.804l-.353-.354.353-.354c.006-.005.041-.05.041-.17a.866.866 0 0 0-.121-.415C12.4 1.272 12.063 1 11.5 1z"/>
+                        </svg>
+                    </button>
+
+                </div>
+                <button type="button" class="btn btn-light rounded-pill me-2">Share</button>
+                <button type="button" class="btn btn-light rounded-circle ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                      </svg>
+                </button>
+            </div>
+          </div>
+
+       </div>
+
+      </div>
+    </div>
+      <!-- Aside -->
+    <div class="col-lg-3">
+      <aside class="aside bg-style">
+
+{#           <div  id="playlistPrivacy_Status">Playlist Privacy </div>#}
+           <div>
+               <div  id="playlisttitle">Playlist Title: </div>
+{#              <h5>Autoplay</h5>#}
+{#               <div class="fw-bold" id="channelName">Channel :</div>#}
+           </div>
+           <div id="videosContainer" class="container_scroll_bar"></div>
+          <button id="MorevideosButton" class="btn-flat align-center"><span><strong>SHOW MORE</strong></span></button>
+
+
+          <div id="playlistDetailsContainer">
+
+            <!-- Playlist details will be displayed here -->
+          </div>
+
+        <div class="button-tags">
+{#            <button type="button" class="btn btn-dark">All</button>#}
+{#            <button type="button" class="btn btn-light">Listenable</button>#}
+{#            <button type="button" class="btn btn-light">Recently uploaded</button>#}
+{#            <button type="button" class="btn btn-light">Watch</button>#}
+            <h2> All Playlists</h2>
+          </div>
+
+            {# show all playlist here #}
+          <div id="playlistContainer" class="container_scroll_bar"></div>
+
+          <button id="showMoreButton" class="btn-flat align-center"><span><strong>SHOW MORE</strong></span></button>
+        </aside>
+
+    </div>
+
+  </div>
+
+</div>
+
+    <script src="{% static '/js/library.js' %}"></script>
+    <script> const csrfToken = "{{ csrf_token }}"; </script>
+
+{% endblock body %}

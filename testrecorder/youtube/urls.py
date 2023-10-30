@@ -4,7 +4,7 @@ from .views import (logout_view, index, create_broadcast,
                     CreateBroadcastView, TransitionBroadcastView, PlaylistItemsInsertView,
                     FetchPlaylistsView, CreatePlaylistView)
 from .views_w import UserChannelsView, DeleteVideoView, LoadVideoView, YouTubeVideoAPIView
-from .views_library import FetchlibraryPlaylists, SelectedPlaylistLoadVideo, RateVideoView
+from .views_library import FetchlibraryPlaylists, SelectedPlaylistLoadVideo, RateVideoView, Delete_video
 
 urlpatterns = [
     path('', index, name='index'),
@@ -20,11 +20,13 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('channels/api/', UserChannelsView.as_view(), name='user_channel'),
     path('delete-video/api/', DeleteVideoView.as_view(), name='delete-video'),
-    path('videos/api/',  LoadVideoView.as_view(), name='videos'),
+    path('videos/api/', LoadVideoView.as_view(), name='videos'),
     path('video/<str:broadcast_id>/',
          YouTubeVideoAPIView.as_view(), name='youtube_video'),
-        # methods call for library page
+    # methods call for library page
     path('fetchlibraryplaylists/api/', FetchlibraryPlaylists.as_view(), name='fetchlibrary-playlists'),
     path('videos/api/<str:playlistId>/', SelectedPlaylistLoadVideo.as_view(), name='videos_from_playlistId'),
     path('videos/api/rate/<str:videoId>/', RateVideoView.as_view(), name='rate_video'),
+    path('videos/api/delete_video/<str:playlistitem_id>/', Delete_video.as_view(), name='delete_video'),  # delete video by id
+
 ]
