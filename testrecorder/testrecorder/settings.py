@@ -14,12 +14,10 @@ import os
 from djongo.operations import DatabaseOperations
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -67,6 +65,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'embed_video',  # library used build the youtubePlayer
 ]
 
 SITE_ID = 1
@@ -102,7 +101,6 @@ TEMPLATES = [
     },
 ]
 
-
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -124,7 +122,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 SOCIALACCOUNT_STORE_TOKENS = True
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
-
 
 WSGI_APPLICATION = 'testrecorder.wsgi.application'
 ASGI_APPLICATION = 'testrecorder.asgi.application'
@@ -194,7 +191,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -259,7 +255,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
 
 CACHES = {
     "default": {

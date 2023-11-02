@@ -1,5 +1,7 @@
 from django import forms
 from .models import ChannelsRecord
+from embed_video.fields import EmbedVideoFormField  #youtube player form
+from .models import Video
 
 
 class AddChannelRecord(forms.ModelForm):
@@ -94,3 +96,10 @@ class CreatePlaylist(forms.Form):
     #     choices = [(channel['channel_id'], channel['channel_title']) for channel in data]
     #     # Return the list of tuples as the choices for the 'channel' field
     #     return choices
+
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['title', 'video']
+
+    video = EmbedVideoFormField()  # Use EmbedVideoFormField for video URLs

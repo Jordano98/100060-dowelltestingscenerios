@@ -3524,10 +3524,11 @@ async function fetchUserPlaylists() {
 
 async function library_page() {
     // const playlistsResponse = await fetch('/youtube/fetchlibraryplaylists/api/', {method: 'GET'});
+     console.log('Library page is loading...');
     const playlistsResponse = await fetch('/youtube/fetchlibraryplaylists/api/', {method: 'GET'});
     if (playlistsResponse.ok) {
         const playlistsData = await playlistsResponse.json();
-        // console.log('playlistsData 3516:', playlistsData);
+         console.log('playlistsData 3531:', playlistsData);
 
         let playlistsDict = playlistsData.playlists;
         const playlistIds = Object.keys(playlistsDict); // Get the playlist IDs
@@ -3535,6 +3536,7 @@ async function library_page() {
 
         // Access the channel title
         const channelTitle = playlistsData.channel_title;
+        const channelSubscriber = playlistsData.subscribers_count;
 
         // Display playlist names in batches of 5 in the HTML select tag
         const playlistContainer = document.getElementById("playlistContainer");
@@ -3597,8 +3599,8 @@ async function library_page() {
                     const privacy_stat = playlistDiv.dataset.privacyStatus; // Retrieve privacy_status
 
                     // Call the function to load and display videos for the selected playlist
-                    await user_selected_playlist(playlist_title, selectedPlaylistId, privacy_stat, channelTitle);
-                    await play_first_video(); // Play the first video of the selected playlist
+                    await user_selected_playlist(playlist_title, selectedPlaylistId, privacy_stat, channelTitle, channelSubscriber);
+//                    await play_first_video(); // Play the first video of the selected playlist
                 });
 
                 // Append the playlist element to the container
@@ -3647,12 +3649,11 @@ function convertDuration(duration) {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-async function user_selected_playlist(playlist_title, selectedPlaylistId, privacy_stat, channelTitle) {
+async function user_selected_playlist(playlist_title, selectedPlaylistId, privacy_stat, channelTitle, channelSubscriber) {
     console.log('Function user_selected_playlist called ');
 
     try {
         const response = await fetch(`/youtube/videos/api/${selectedPlaylistId}/`, {method: 'GET'});
-
         if (response.ok) {
             const selected_playlistsData = await response.json();
             let playlistsDict = selected_playlistsData.playlist_videos;
@@ -3677,6 +3678,7 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
                 for (let i = start; i < end; i++) {
                     // console.log('Creating video element for index', i);
                     let video_listId = playlistIds[i];
+                    console.log('Video Detail from playlist', video_listId)
                     let video_detail = playlistsDict[video_listId];
                     const {
                         videoId,
@@ -3684,6 +3686,8 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
                         videoTitle,
                         videoThumbnail,
                         duration,
+                        video_viewCount,
+                        video_likeCount,
                         videoDescription
                     } = video_detail;
 
@@ -3732,7 +3736,8 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
                         const privacy_stat = videoDiv.dataset.privacyStatus; // Retrieve privacy_status
 
                         // Call the function to play video
-                        await play(video_detail);
+//                        await play(video_detail);
+                          await play(video_detail, channelSubscriber);
                     });
 
                     // Append the playlist element to the container
@@ -3764,8 +3769,9 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
     }
 }
 
+let share_videoId = null;
 
-async function play(videoObject) {
+async function play(videoObject, channelSubscriber) {
     console.log('called Play function')
     // Destroy the existing player
     if (currentPlayer) {
@@ -3782,120 +3788,38 @@ async function play(videoObject) {
                 onReady: function (event) {
                     event.target.playVideo();
                     updateVideoInfo(videoObject);
-
-                    // const likeButton = document.getElementById('thumb_like');
-                    // const dislikeButton = document.getElementById('thumb_dislike');
-
-                    // likeButton.addEventListener('click', function () {
-                    //     handleVideoRating('like', videoObject.id);
-                    // });
-
-                    // dislikeButton.addEventListener('click', function () {
-                    //     handleVideoRating('dislike', videoObject.videoId);
-                    // });
                 },
             },
         });
+        // Update the video_likeCount in the HTML
+        document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
+        document.getElementById('channel_subscribers').textContent = channelSubscriber;
+        document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
     }, 50);
+    share_videoId = videoObject.id;
 }
 
 function updateVideoInfo(videoObject) {
     // playing video update info on html
     console.log('function updateVideoInfo 3796: ', videoObject)
     videoId = videoObject.videoId;
-    console.log(videoId);
+
+     const deleteButton = document.getElementById('videodelete');
+    deleteButton.setAttribute('data-video-id', videoObject.playlistItem_id);
+
+
     const titleElement = document.querySelector('.play-video-title');
     // const titleElement = document.querySelector('.fs-4.fw-bold');
     const thumbnailElement = document.querySelector('.img-profile');
     const privacy = document.getElementById('playingvideo_privacy');
+    const likecount = document.getElementById('video_likecount');
 
     // Update the elements with video information
     titleElement.textContent = videoObject.videoTitle;
     thumbnailElement.src = videoObject.videoThumbnail;
     privacy.textContent = `Privacy: ${videoObject.privacyStatus}`;
-    // titleElement.textContent = videoObject.title;
-    // thumbnailElement.src = videoObject.thumbnail;
-    // privacy.textContent = `Privacy: ${videoObject.privacy}`;
 
 }
-
-
-async function handleVideoRating(rating, videoId) {
-    console.log('Video rating function call 3803 rating and videoid as a parameter:', rating, videoId)
-    try {
-        let csrftoken = await getCookie('csrftoken');
-        let rateing_url = `/youtube/videos/api/rate/${videoId}/`;
-
-        await fetch(rateing_url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken,
-            },
-            body: JSON.stringify({rating: rating}),
-        });
-
-        if (response.ok) {
-            console.log(`Rated ${rating} for video with ID: ${videoId}`);
-        } else {
-            console.error('Failed to rate the video');
-        }
-    } catch (error) {
-        console.error('An error occurred while rating the video:', error);
-    }
-}
-
-async function play_first_video() {
-    // Get the first video from html block and then pass the required vriables to other function
-
-    const videos = document.getElementById('videosContainer');
-
-    if (videos.children.length > 0) {
-        let videoObject = null;
-
-        for (let i = 0; i < videos.children.length; i++) {
-            const videoDiv = videos.children[i];
-            const videoId = videoDiv.getAttribute('data-video-id');
-            const videoTitle = videoDiv.querySelector('h3').textContent;
-            const privacy = videoDiv.getAttribute('data-privacy-status');
-            const thumbnailImg = videoDiv.querySelector('.media-figure'); // Select the img element
-            const thumbnail = thumbnailImg.getAttribute('src'); // Get the src attribute value
-
-
-            if (videoId && videoTitle) {
-                videoObject = {
-                    id: videoId,
-                    title: videoTitle,
-                    thumbnail: thumbnail,
-                    privacy:privacy,
-                };
-                break;
-            }
-        }
-
-        if (videoObject) {
-            await play(videoObject);
-        } else {
-            console.log('No valid video found in playlist');
-        }
-    }
-}
-
-
-// Attach event listener to the Autoplay switch
-const autoplaySwitch = document.querySelector('.switch-container');
-autoplaySwitch.addEventListener('click', function () {
-    const autoplayCircle = document.querySelector('.switch-circle');
-    const autoplayOn = autoplayCircle.classList.contains('on');
-
-    if (autoplayOn) {
-        autoplayCircle.classList.remove('on');
-        clearInterval(autoplayInterval);
-    } else {
-        autoplayCircle.classList.add('on');
-        const autoplayInterval = setInterval(play_next_video, 5000);
-    }
-});
 
 function resetonStartRecording() {
 
@@ -3976,3 +3900,118 @@ async function shareLibraryLinkModal() {
     const libraryLinkModal = new bootstrap.Modal(document.getElementById('share-library-link-modal'));
     libraryLinkModal.show();
 }
+
+
+const deleteButton = document.getElementById('videodelete');
+deleteButton.addEventListener('click', () => {
+    const playlistitem_id = deleteButton.getAttribute('data-video-id');
+    deleteVideo(playlistitem_id);
+});
+
+async function deleteVideo(playlistitem_id) {
+    console.log('from delete function id ', playlistitem_id);
+    try {
+        const response = await fetch(`/youtube/videos/api/delete_video/${playlistitem_id}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
+        });
+        console.log('Response from delete function:', response);
+
+        if (response.status === 204) {
+            // Successful deletion, no content in the response
+            alert('Video deleted successfully');
+
+            // Reload the current page
+            window.location.reload();
+        } else if (response.ok) {
+            // Handle other successful status codes (e.g., 200) here
+            const result = await response.json();
+            alert(result.message); // Display a success message
+
+            // Reload the current page
+            window.location.reload();
+        } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.message}`); // Display an error message
+        }
+    } catch (error) {
+        console.error('Error while deleting video:', error);
+        alert('An error occurred while deleting the video.');
+    }
+}
+
+//
+//async function handleVideoRating(rating, videoId) {
+//    console.log('Video rating function call 3803 rating and videoid as a parameter:', rating, videoId)
+//    try {
+//        let csrftoken = await getCookie('csrftoken');
+//        let rateing_url = `/youtube/videos/api/rate/${videoId}/`;
+//
+//        await fetch(rateing_url, {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json',
+//                'X-CSRFToken': csrftoken,
+//            },
+//            body: JSON.stringify({rating: rating}),
+//        });
+//
+//        if (response.ok) {
+//            console.log(`Rated ${rating} for video with ID: ${videoId}`);
+//        } else {
+//            console.error('Failed to rate the video');
+//        }
+//    } catch (error) {
+//        console.error('An error occurred while rating the video:', error);
+//    }
+//}
+//
+//async function playFirstVideo() {
+//    const videosContainer = document.getElementById('videosContainer');
+//
+//    if (videosContainer.children.length > 0) {
+//        let videoObject = null;
+//
+//        for (let i = 0; i < videosContainer.children.length; i++) {
+//            const videoDiv = videosContainer.children[i];
+//            const videoId = videoDiv.getAttribute('data-video-id');
+//            const videoTitle = videoDiv.querySelector('h3').textContent;
+//            const privacy = videoDiv.getAttribute('data-privacy-status');
+//            const thumbnailImg = videoDiv.querySelector('.media-figure');
+//            const thumbnail = thumbnailImg.getAttribute('src');
+//
+//            if (videoId && videoTitle) {
+//                videoObject = {
+//                    id: videoId,
+//                    title: videoTitle,
+//                    thumbnail: thumbnail,
+//                    privacy: privacy,
+//                };
+//                break;
+//            }
+//        }
+//
+//        if (videoObject) {
+//            await play(videoObject);
+//        } else {
+//            console.log('No valid video found in the playlist');
+//        }
+//    }
+//}
+//
+//const autoplaySwitch = document.querySelector('.switch-container');
+//autoplaySwitch.addEventListener('click', function () {
+//    const autoplayCircle = document.querySelector('.switch-circle');
+//    const autoplayOn = autoplayCircle.classList.contains('on');
+//
+//    if (autoplayOn) {
+//        autoplayCircle.classList.remove('on');
+//        clearInterval(autoplayInterval);
+//    } else {
+//        autoplayCircle.classList.add('on');
+//        const autoplayInterval = setInterval(playNextVideo, 5000);
+//    }
+//});
+

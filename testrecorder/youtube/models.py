@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import User
+from embed_video.fields import EmbedVideoField  # youtube player
 
 
 class UserYoutubePlaylists(models.Model):
@@ -25,6 +26,7 @@ class ChannelsRecord(models.Model):
     channel_title = models.CharField(max_length=50, blank=False, unique=True)
     channel_credentials = models.TextField(default="")
     timestamp = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         db_table = 'channels_records'
 
@@ -54,3 +56,11 @@ class YoutubeUserCredential(models.Model):
 
     def __str__(self):
         return f'{self.user.username} {self.user.first_name}'
+
+
+class Video(models.Model):
+    title = models.CharField(max_length=100)
+    video = EmbedVideoField()  # Use EmbedVideoField for video URLs
+
+    def __str__(self):
+        return self.title
