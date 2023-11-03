@@ -42,11 +42,16 @@
         <div class="video-privacy">
           <h5 id="playingvideo_privacy">Privacy: <span>Unlisted</span></h5>
         </div>
-          <p class="likes">9.7k...</p>
-          <p class="subscriber">186 subscribers</p>
+<!--          <p class="likes">9.7k...</p>-->
+          <p class="likes">Likes : <span id="likeCountValue"></span></p>
+<!--          <p class="subscriber">186 subscribers</p>-->
+          <p class="subscriber"><span id="channel_subscribers"></span> subscribers</p>
           <div class="library-share-btn">
             <button class="library-share" onClick="shareLibraryLinkModal()">Share</button>
+            <button class="library-share" id="videodelete">Delete</button>
+<!--             <button id="videodelete" >Delete</button>-->
           </div>
+
         </div>
       </div>
   </div>
@@ -73,7 +78,7 @@
     </div>
     <br>
     <button class="showmore" id="MorevideosButton">Show More</button>
-      
+
     </div>
     <!-- all playlist container -->
     <div class="all-playlist">
@@ -103,6 +108,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
+
 <script src="{% static '/js/library.js' %}"></script>
 <script> const csrfToken = "{{ csrf_token }}"; </script>
 

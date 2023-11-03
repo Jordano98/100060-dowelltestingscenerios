@@ -3770,7 +3770,6 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
 }
 
 let share_videoId = null;
-
 async function play(videoObject, channelSubscriber) {
     console.log('called Play function')
     // Destroy the existing player
@@ -3820,6 +3819,79 @@ function updateVideoInfo(videoObject) {
     privacy.textContent = `Privacy: ${videoObject.privacyStatus}`;
 
 }
+//
+//async function handleVideoRating(rating, videoId) {
+//    console.log('Video rating function call 3803 rating and videoid as a parameter:', rating, videoId)
+//    try {
+//        let csrftoken = await getCookie('csrftoken');
+//        let rateing_url = `/youtube/videos/api/rate/${videoId}/`;
+//
+//        await fetch(rateing_url, {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json',
+//                'X-CSRFToken': csrftoken,
+//            },
+//            body: JSON.stringify({rating: rating}),
+//        });
+//
+//        if (response.ok) {
+//            console.log(`Rated ${rating} for video with ID: ${videoId}`);
+//        } else {
+//            console.error('Failed to rate the video');
+//        }
+//    } catch (error) {
+//        console.error('An error occurred while rating the video:', error);
+//    }
+//}
+//
+//async function playFirstVideo() {
+//    const videosContainer = document.getElementById('videosContainer');
+//
+//    if (videosContainer.children.length > 0) {
+//        let videoObject = null;
+//
+//        for (let i = 0; i < videosContainer.children.length; i++) {
+//            const videoDiv = videosContainer.children[i];
+//            const videoId = videoDiv.getAttribute('data-video-id');
+//            const videoTitle = videoDiv.querySelector('h3').textContent;
+//            const privacy = videoDiv.getAttribute('data-privacy-status');
+//            const thumbnailImg = videoDiv.querySelector('.media-figure');
+//            const thumbnail = thumbnailImg.getAttribute('src');
+//
+//            if (videoId && videoTitle) {
+//                videoObject = {
+//                    id: videoId,
+//                    title: videoTitle,
+//                    thumbnail: thumbnail,
+//                    privacy: privacy,
+//                };
+//                break;
+//            }
+//        }
+//
+//        if (videoObject) {
+//            await play(videoObject);
+//        } else {
+//            console.log('No valid video found in the playlist');
+//        }
+//    }
+//}
+//
+//const autoplaySwitch = document.querySelector('.switch-container');
+//autoplaySwitch.addEventListener('click', function () {
+//    const autoplayCircle = document.querySelector('.switch-circle');
+//    const autoplayOn = autoplayCircle.classList.contains('on');
+//
+//    if (autoplayOn) {
+//        autoplayCircle.classList.remove('on');
+//        clearInterval(autoplayInterval);
+//    } else {
+//        autoplayCircle.classList.add('on');
+//        const autoplayInterval = setInterval(playNextVideo, 5000);
+//    }
+//});
+
 
 function resetonStartRecording() {
 
@@ -3908,6 +3980,37 @@ deleteButton.addEventListener('click', () => {
     deleteVideo(playlistitem_id);
 });
 
+
+//async function deleteVideo(playlistitem_id) {
+//    console.log('from delete function id ', playlistitem_id);
+//    try {
+//        const response = await fetch(`/youtube/videos/api/delete_video/${playlistitem_id}/`, {
+//            method: 'DELETE',
+//            headers: {
+//                'X-CSRFToken': csrfToken
+//            }
+//        });
+//        console.log('Response from delete function:', response);
+//
+//        if (response.status === 204) {
+//            // Successful deletion, no content in the response
+//            alert('Video deleted successfully');
+//            // You can also perform any other actions after successful deletion
+//        } else if (response.ok) {
+//            // Handle other successful status codes (e.g., 200) here
+//            const result = await response.json();
+//            alert(result.message); // Display a success message
+//            // You can also perform any other actions after successful deletion
+//        } else {
+//            const errorData = await response.json();
+//            alert(`Error: ${errorData.message}`); // Display an error message
+//        }
+//    } catch (error) {
+//        console.error('Error while deleting video:', error);
+//        alert('An error occurred while deleting the video.');
+//    }
+//}
+
 async function deleteVideo(playlistitem_id) {
     console.log('from delete function id ', playlistitem_id);
     try {
@@ -3941,77 +4044,3 @@ async function deleteVideo(playlistitem_id) {
         alert('An error occurred while deleting the video.');
     }
 }
-
-//
-//async function handleVideoRating(rating, videoId) {
-//    console.log('Video rating function call 3803 rating and videoid as a parameter:', rating, videoId)
-//    try {
-//        let csrftoken = await getCookie('csrftoken');
-//        let rateing_url = `/youtube/videos/api/rate/${videoId}/`;
-//
-//        await fetch(rateing_url, {
-//            method: 'POST',
-//            headers: {
-//                'Content-Type': 'application/json',
-//                'X-CSRFToken': csrftoken,
-//            },
-//            body: JSON.stringify({rating: rating}),
-//        });
-//
-//        if (response.ok) {
-//            console.log(`Rated ${rating} for video with ID: ${videoId}`);
-//        } else {
-//            console.error('Failed to rate the video');
-//        }
-//    } catch (error) {
-//        console.error('An error occurred while rating the video:', error);
-//    }
-//}
-//
-//async function playFirstVideo() {
-//    const videosContainer = document.getElementById('videosContainer');
-//
-//    if (videosContainer.children.length > 0) {
-//        let videoObject = null;
-//
-//        for (let i = 0; i < videosContainer.children.length; i++) {
-//            const videoDiv = videosContainer.children[i];
-//            const videoId = videoDiv.getAttribute('data-video-id');
-//            const videoTitle = videoDiv.querySelector('h3').textContent;
-//            const privacy = videoDiv.getAttribute('data-privacy-status');
-//            const thumbnailImg = videoDiv.querySelector('.media-figure');
-//            const thumbnail = thumbnailImg.getAttribute('src');
-//
-//            if (videoId && videoTitle) {
-//                videoObject = {
-//                    id: videoId,
-//                    title: videoTitle,
-//                    thumbnail: thumbnail,
-//                    privacy: privacy,
-//                };
-//                break;
-//            }
-//        }
-//
-//        if (videoObject) {
-//            await play(videoObject);
-//        } else {
-//            console.log('No valid video found in the playlist');
-//        }
-//    }
-//}
-//
-//const autoplaySwitch = document.querySelector('.switch-container');
-//autoplaySwitch.addEventListener('click', function () {
-//    const autoplayCircle = document.querySelector('.switch-circle');
-//    const autoplayOn = autoplayCircle.classList.contains('on');
-//
-//    if (autoplayOn) {
-//        autoplayCircle.classList.remove('on');
-//        clearInterval(autoplayInterval);
-//    } else {
-//        autoplayCircle.classList.add('on');
-//        const autoplayInterval = setInterval(playNextVideo, 5000);
-//    }
-//});
-
