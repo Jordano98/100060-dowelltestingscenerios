@@ -1,8 +1,8 @@
 import os
 import json
-from dotenv import load_dotenv
-
-from django.shortcuts import render
+# from dotenv import load_dotenv
+#
+# from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -15,7 +15,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+# cashe and cashe_page are used decorator for cashe time setting
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+
 from youtube.forms import AddChannelRecord, CreatePlaylist
+
 
 # load_dotenv()
 
@@ -94,6 +99,25 @@ class CalendlyPageView(TemplateView):
 class AboutPageView(TemplateView):
     template_name = 'about.html'
 
+    # def get(self, request, *args, **kwargs):
+    #     # Define a unique cache key for this view
+    #     cache_key = 'about_page_data'
+    #
+    #     # Try to get data from the cache
+    #     cached_data = cache.get(cache_key)
+    #
+    #     if cached_data is not None:
+    #         # If data is found in the cache, use it
+    #         context = cached_data
+    #     else:
+    #         # If data is not in the cache, generate it
+    #         context = self.get_context_data()
+    #
+    #         # Store the data in the cache for future use
+    #         cache.set(cache_key, context, 60 * 60)  # Cache for 1 hour (adjust the timeout as needed)
+    #
+    #     return self.render_to_response(context)
+
 
 @csrf_exempt
 def records_view(request):
@@ -143,12 +167,6 @@ class WebsocketPermissionView(APIView):
             return Response(failed_feed_back, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class library_page(TemplateView):
-#     print('welcome library page')
-#
-#     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-#         return render(request, self.library.html)
-#     # template_name = 'library.html'
-
+@cache_page(60 * 15, cache='local_cache')  # Cache for 15 minutes
 def library_page(request):
     return render(request, 'library.html')
