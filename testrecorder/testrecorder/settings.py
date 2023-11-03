@@ -38,9 +38,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.liveuxstoryboard.com', 'https://*.127.0.0.1']
 
 # # Allow cors
+
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGIN = [
     'http://localhost:8080',
     'https://liveuxstoryboard.com',
+    'http://127.0.0.1:8000',
 ]
 
 # Application definition

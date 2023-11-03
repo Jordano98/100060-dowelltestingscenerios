@@ -22,9 +22,12 @@
   <!-- video container -->
   <div class="library-video-container">
     <!-- YouTube IPlayer -->
-      <div class="player" id="youtube_player">
-          <iframe src="https://www.youtube.com/embed/Iv8mg2iFWYA" frameborder="0" allowfullscreen></iframe>
-      </div>
+<!--      <div class="player" id="youtube_player">-->
+       <iframe id="player" type="text/html" width="640" height="360"
+        src="https://www.youtube.com/embed/Iv8mg2iFWYA?autoplay=1&origin=http://127.0.0.1:8000/"
+        frameborder="0"></iframe>
+<!--          <iframe src="https://www.youtube.com/embed/Iv8mg2iFWYA" frameborder="0" allowfullscreen></iframe>-->
+<!--      </div>-->
       <div class="single-video-title">
       {% comment %} <div class="single-video-title fs-4 fw-bold"> {% endcomment %}
         <h3 class="play-video-title" >About DoWell UX Living Lab</h3>
@@ -111,5 +114,6 @@
 
 <script src="{% static '/js/library.js' %}"></script>
 <script> const csrfToken = "{{ csrf_token }}"; </script>
+<script src="https://www.youtube.com/iframe_api"></script>
 
 {% endblock body %}

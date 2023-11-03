@@ -87,9 +87,6 @@ let tableChannels = [];
 let currentChannelTitle = null;
 let showNotificationPermission = 'default';
 
-let currentPlayer = null; // Store the current player instance
-
-
 // video timer
 let videoTimer = document.querySelector(".video-timer")
 let switchCamBtn = document.querySelector(".switch-btn")
@@ -3770,33 +3767,83 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
 }
 
 let share_videoId = null;
-async function play(videoObject, channelSubscriber) {
-    console.log('called Play function')
-    // Destroy the existing player
-    if (currentPlayer) {
-        currentPlayer.destroy();
-        currentPlayer = null;
-    }
 
-    // Create a new YouTube player with a small delay
-    setTimeout(() => {
-        console.log('videoObject is 3781:', videoObject);
-        currentPlayer = new YT.Player('youtube_player', {
-            videoId: videoObject.id,
-            events: {
-                onReady: function (event) {
-                    event.target.playVideo();
-                    updateVideoInfo(videoObject);
-                },
-            },
-        });
-        // Update the video_likeCount in the HTML
-        document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
-        document.getElementById('channel_subscribers').textContent = channelSubscriber;
-        document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
-    }, 50);
-    share_videoId = videoObject.id;
+let currentPlayer; // Declare a variable to hold the current player
+
+function createYouTubePlayer(videoObject, channelSubscriber) {
+  // Destroy the existing player if it exists
+  if (currentPlayer) {
+    currentPlayer.destroy();
+  }
+
+  // Create a new player
+  currentPlayer = new YT.Player('player', {
+    height: '360',
+    width: '640',
+    videoId: videoObject.videoId, // Use the video ID passed to the function
+    events: {
+      'onReady': onPlayerReady
+    }
+  });
+
+  // Update video information and other elements
+  updateVideoInfo(videoObject);
+  document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
+  document.getElementById('channel_subscribers').textContent = channelSubscriber;
+  document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
 }
+
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+function play(videoObject, channelSubscriber) {
+  console.log('Called Play function');
+  console.log('VideoObject:', videoObject);
+
+  // Check if the YouTube API is ready
+  if (typeof YT !== 'undefined' && YT.loaded) {
+    createYouTubePlayer(videoObject, channelSubscriber);
+  } else {
+    // If the API is not ready, add an event listener for API readiness
+    window.onYouTubeIframeAPIReady = function () {
+      createYouTubePlayer(videoObject, channelSubscriber);
+    };
+  }
+}
+
+
+//async function play(videoObject, channelSubscriber) {
+//    console.log('called Play function');
+//
+//    // Destroy the existing player
+//    if (currentPlayer) {
+//        currentPlayer.destroy();
+//        currentPlayer = null;
+//    }
+//
+//    // Create a new YouTube player with a small delay
+//    setTimeout(() => {
+//        console.log('videoObject is 3781:', videoObject);
+//
+//            currentPlayer = new YT.Player('youtube_player', {
+//            videoId: videoObject.id,
+//            events: {
+//                onReady: function (event) {
+//                    event.target.playVideo();
+//                    updateVideoInfo(videoObject);
+//                },
+//            },
+//        });
+//        // Update the video_likeCount in the HTML
+//        document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
+//        document.getElementById('channel_subscribers').textContent = channelSubscriber;
+//        document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
+//    }, 50);
+//
+//    share_videoId = videoObject.id;
+//}
+
 
 function updateVideoInfo(videoObject) {
     // playing video update info on html
