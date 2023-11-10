@@ -27,6 +27,10 @@ def get_user(sender, **kwargs):
     # retrieve the 'oauth_data' token from the cache
     token = cache.get('oauth_data')
 
+    if token is None:
+        # Handle the case when the token is not found
+        token = kwargs['sociallogin'].token
+
     # Parse the input string into a datetime object
     dt = datetime.datetime.strptime(
         str(token.expires_at), '%Y-%m-%d %H:%M:%S.%f%z')

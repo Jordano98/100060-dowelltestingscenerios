@@ -14,12 +14,10 @@ from djongo.operations import DatabaseOperations
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -28,7 +26,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -102,7 +101,6 @@ TEMPLATES = [
     },
 ]
 
-
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -152,7 +150,7 @@ CHANNEL_LAYERS = {
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-#
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
@@ -193,7 +191,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
