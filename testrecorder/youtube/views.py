@@ -564,9 +564,11 @@ class FetchPlaylistsView(APIView):
             playlists = fetch_playlists_with_pagination(youtube)
 
             # Check if the playlist is empty
-            if len(playlists) == 0:
+            # if len(playlists) == 0:
+            if not playlists:
                 print("The playlist is empty.")
                 return Response({'Error': 'The playlist is empty.'}, status=status.HTTP_204_NO_CONTENT)
+
             else:
                 # playlist id and title dictionary
                 user_playlists = {}
@@ -713,7 +715,7 @@ class CreatePlaylistView(APIView):
                 return Response(msg, status=status.HTTP_200_OK)
             else:
                 msg = {'CreatePlaylistResponse': "Failed to create playlist"}
-                return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as err:
             error_msg = "Error while creating playlist: " + str(err)

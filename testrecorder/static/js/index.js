@@ -2437,26 +2437,20 @@ async function loadUserPlaylist() {
   }
 }
 
+//Modified fetchuserPlaylist function for better exceptional handling
+
 async function fetchUserPlaylists() {
   let statusBar = document.getElementById("app-status");
   let selectUserPlaylist = document.querySelector(".selectPlaylist")
 
-  await fetch('/youtube/fetchplaylists/api/', { method: 'GET', })
-    .then(response => {
-      responseStatus = response.status;
-      if (response.ok) {
-        if (response.status === 204) {
-          throw new Error('No Content');
-        } else {
-          return response.json();
-        }
-      } else {
-        throw new Error('Server side error')
-      }
-    })
-    .then((json) => {
+  try {
+    const response = await fetch('/youtube/fetchplaylists/api/', { method: 'GET' });
+
+    if (response.ok) {
+      const json = await response.json();
       msg = "STATUS: Playlists Received."
       statusBar.innerHTML = msg;
+
       let userPlaylists = json.user_playlists;
       for (const key in userPlaylists) {
         let opt = document.createElement("option");
@@ -2464,23 +2458,75 @@ async function fetchUserPlaylists() {
         opt.value = key;
         selectUserPlaylist.append(opt)
       }
-      // Get today's playlist id
-      let todaysPlaylistObject = json.todays_playlist_dict
-      todaysPlaylistId = todaysPlaylistObject.todays_playlist_id
-    }
-    )
-    .catch(error => {
-      console.error(error);
-      if (error.message === 'No content') {
-        msg = "ERROR: The channel does not have any playlists created.";
-        statusBar.innerHTML = msg;
-      } else {
 
-        msg = "ERROR: Unable to fetch playlist please contact the admin";
-        statusBar.innerHTML = msg;
-      }
-    });
+      let todaysPlaylistObject = json.todays_playlist_dict;
+      todaysPlaylistId = todaysPlaylistObject.todays_playlist_id;
+    } else {
+      throw new Error('Server side error');
+    }
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === 'No content') {
+      msg = "ERROR: The channel does not have any playlists created.";
+      statusBar.innerHTML = msg;
+    } else if (channel) {
+      // This is an error, but when the user has a channel
+      // It's not necessary to contact the admin
+      // You can provide a specific message for this case
+      msg = "ERROR: An issue occurred with fetching playlists for the channel.";
+      statusBar.innerHTML = msg;
+    } else {
+      msg = "ERROR: Unable to fetch playlist please contact the admin";
+      statusBar.innerHTML = msg;
+    }
+  }
 }
+
+//async function fetchUserPlaylists() {
+//  let statusBar = document.getElementById("app-status");
+//  let selectUserPlaylist = document.querySelector(".selectPlaylist")
+//
+//  await fetch('/youtube/fetchplaylists/api/', { method: 'GET', })
+//    .then(response => {
+//      responseStatus = response.status;
+//      if (response.ok) {
+//        if (response.status === 204) {
+//          throw new Error('No Content');
+//        } else {
+//          return response.json();
+//        }
+//      } else {
+//        throw new Error('Server side error')
+//      }
+//    })
+//    .then((json) => {
+//      msg = "STATUS: Playlists Received."
+//      statusBar.innerHTML = msg;
+//      let userPlaylists = json.user_playlists;
+//      for (const key in userPlaylists) {
+//        let opt = document.createElement("option");
+//        opt.innerHTML = userPlaylists[key];
+//        opt.value = key;
+//        selectUserPlaylist.append(opt)
+//      }
+//      // Get today's playlist id
+//      let todaysPlaylistObject = json.todays_playlist_dict
+//      todaysPlaylistId = todaysPlaylistObject.todays_playlist_id
+//    }
+//    )
+//    .catch(error => {
+//      console.error(error);
+//      if (error.message === 'No content') {
+//        msg = "ERROR: The channel does not have any playlists created.";
+//        statusBar.innerHTML = msg;
+//      } else {
+//
+//        msg = "ERROR: Unable to fetch playlist please contact the admin";
+//        statusBar.innerHTML = msg;
+//      }
+//    });
+//}
 
 async function load_gallery() {
   // console.log('welcome Load Gallery Function');
