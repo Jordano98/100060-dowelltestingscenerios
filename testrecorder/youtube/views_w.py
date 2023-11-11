@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import YoutubeUserCredential, ChannelsRecord
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -24,20 +23,17 @@ def create_user_youtube_object(request):
     print('Creating youtube object...')
     try:
         # Retrieve the YoutubeUserCredential object associated with the authenticated user
-        print('user=request.user 27' , request.user)
         youtube_user = YoutubeUserCredential.objects.get(user=request.user)
-        print('youtube_user 28:', youtube_user)
 
         # Retrieve the user's credentials associated with the YoutubeUserCredential object
         credentials_data = youtube_user.credential
-        print('credentials_data 33:', credentials_data)
         try:
             # Convert the JSON string to a dictionary
             credentials_data_dict = json.loads(credentials_data)
             print('credentials_data_dict 37:', credentials_data_dict)
             # Create credentials from the dictionary
             credentials = Credentials.from_authorized_user_info(info=credentials_data_dict)
-            print('credentials 40:', credentials)
+            print('credentials from create_user_youtube_object function:', credentials)
             # print('Credentials: xxxxxxxxxxx')
         except Exception as e:
             credentials = Credentials.from_authorized_user_info(info=credentials_data)
@@ -68,13 +64,12 @@ def create_user_youtube_object(request):
 
         # Create a YouTube object using the v3 version of the API and the retrieved credentials
         youtube = build('youtube', 'v3', credentials=credentials, cache_discovery=False)
-        
+
         return youtube, credentials
     except YoutubeUserCredential.DoesNotExist:
         # If the user doesn't have a YoutubeUserCredential object,
         # return an error response with 401 Unauthorized status code
         return None
-
 
 
 class UserChannelsView(APIView):
@@ -127,7 +122,7 @@ class UserChannelsView(APIView):
             if youtube is None:
                 print('youtube object creation failed!!')
                 return Response({'Error': 'Account is not a Google account'}, status=status.HTTP_401_UNAUTHORIZED)
-            
+
             print('Getting user youtube channel...')
             # Retrieve the channels associated with the user's account
             channels_response = youtube.channels().list(part='snippet', mine=True).execute()
@@ -136,13 +131,19 @@ class UserChannelsView(APIView):
                                 status=status.HTTP_404_NOT_FOUND)
 
             # Process the channels into a list of dictionaries containing the channel id and title
-            channels = [
-                {
-                    'channel_id': channel['id'],
-                    'channel_title': channel['snippet']['title']
-                }
-                for channel in channels_response['items']
-            ]
+            channels = []
+            for channel in channels_response.get('items', []):
+                channel_id = channel.get('id', '')
+                channel_title = channel.get('snippet', {}).get('title', '')
+                channels.append({'channel_id': channel_id, 'channel_title': channel_title})
+
+            # channels = [
+            #     {
+            #         'channel_id': channel['id'],
+            #         'channel_title': channel['snippet']['title']
+            #     }
+            #     for channel in channels_response['items']
+            # ]
 
             try:
                 # Check if the first channel already exists in the database
@@ -293,14 +294,14 @@ class DeleteVideoView(APIView):
             if youtube is None:
                 print('youtube object creation failed!!')
                 return Response({'Error': 'Account is not a Google account'}, status=status.HTTP_401_UNAUTHORIZED)
-            
 
             video_id = request.data.get('video_id')
 
             # Delete the video using the video ID
             # If successful, this method returns an HTTP 204 response code (No Content).
             response = youtube.videos().delete(id=video_id).execute()
-            return Response({'message': "Video deleted successfully", 'response': response}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'message': "Video deleted successfully", 'response': response},
+                            status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({'Error': str(e)})
 
@@ -338,7 +339,7 @@ class LoadVideoView(APIView):
             if youtube is None:
                 print('youtube object creation failed!!')
                 return Response({'Error': 'Account is not a Google account'}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
             # Perform the YouTube Channels API call
             channels_response = youtube.channels().list(
                 part='contentDetails',
@@ -379,7 +380,8 @@ class LoadVideoView(APIView):
                         {
                             'videoId': videoItem['snippet']['resourceId']['videoId'],
                             'videoTitle': videoItem['snippet']['title'],
-                            'videoThumbnail': videoItem['snippet']['thumbnails'].get('default', {}).get('url', 'No Thumbnail Available'),
+                            'videoThumbnail': videoItem['snippet']['thumbnails'].get('default', {}).get('url',
+                                                                                                        'No Thumbnail Available'),
                             'videoDescription': videoItem['snippet']['description'],
                         } for videoItem in playlist_videos
                         if videoItem['snippet']['title'] != 'Deleted video'

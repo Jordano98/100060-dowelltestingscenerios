@@ -3770,32 +3770,43 @@ async function user_selected_playlist(playlist_title, selectedPlaylistId, privac
 }
 
 let share_videoId = null;
+let player; // declared outside the function, to preserve the player state
 async function play(videoObject, channelSubscriber) {
-    console.log('called Play function')
-    // Destroy the existing player
-    if (currentPlayer) {
-        currentPlayer.destroy();
-        currentPlayer = null;
+    console.log('From Play function Video Object is as :  ', videoObject)
+    const playerElement = document.getElementById('youtube_player');
+
+    if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }
 
-    // Create a new YouTube player with a small delay
-    setTimeout(() => {
-        console.log('videoObject is 3781:', videoObject);
-        currentPlayer = new YT.Player('youtube_player', {
-            videoId: videoObject.id,
-            events: {
-                onReady: function (event) {
-                    event.target.playVideo();
-                    updateVideoInfo(videoObject);
-                },
-            },
-        });
-        // Update the video_likeCount in the HTML
-        document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
-        document.getElementById('channel_subscribers').textContent = channelSubscriber;
-        document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
-    }, 50);
-    share_videoId = videoObject.id;
+    if (!player) {
+        window.onYouTubeIframeAPIReady = createPlayer;
+    } else {
+        await player.loadVideoById(videoObject.id);
+        updateVideoInfo(videoObject);
+    }
+
+  function createPlayer() {
+    player = new YT.Player(playerElement, {
+        videoId: videoObject.id,
+        events: {
+            onReady: function (event) {
+                event.target.playVideo();
+                event.target.addEventListener('onStateChange', function (state) {
+                    if (state.data === YT.PlayerState.PLAYING) {
+                        updateVideoInfo(videoObject);
+                        document.getElementById('likeCountValue').textContent = videoObject.video_likeCount;
+                        document.getElementById('channel_subscribers').textContent = channelSubscriber;
+                        document.getElementById('videodelete').setAttribute('data-video-id', videoObject.playlistItem_id);
+                    }
+                });
+            }
+        }
+    });
+}
 }
 
 function updateVideoInfo(videoObject) {

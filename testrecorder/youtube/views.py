@@ -728,6 +728,6 @@ class CreatePlaylistView(APIView):
 
 
 def logout_view(request):
-    '''Logs a user out and redirect to the homepage'''
+    """Logs a user out and redirect to the homepage"""
     logout(request)
     return redirect('/')

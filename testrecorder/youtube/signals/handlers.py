@@ -9,8 +9,8 @@ from django.core.cache import cache
 import datetime
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 
 @receiver(user_logged_in)
 def get_user(sender, **kwargs):
@@ -38,7 +38,7 @@ def get_user(sender, **kwargs):
     dt_utc = dt.astimezone(datetime.timezone.utc)
     # Format the datetime object as an ISO 8601 string
     iso_string = dt_utc.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    
+
     client_id = os.environ.get('CLIENT_ID')
     client_secret = os.environ.get('CLIENT_SECRET')
 
@@ -89,11 +89,12 @@ def get_user(sender, **kwargs):
     else:
         print('Credential not saved beacause record already exist!!')
 
-     # delete the 'oauth_data' token from the cache
+    # delete the 'oauth_data' token from the cache
     cache.delete('oauth_data')
 
     # returns the 'user' object from the signal 'kwargs' parameter
-    return (kwargs['user'])
+    # return (kwargs['user'])
+    return user
 
 
 def is_available_in_db(email) -> bool:
@@ -169,5 +170,5 @@ def insert_user_credential_into_dowell_connection_db(email, credential):
 
     response = requests.request(
         "POST", url, headers=headers, data=payload).json()
-    print('=== Insert Response ===> ',response)
+    print('=== Insert Response ===> ', response)
     return response
