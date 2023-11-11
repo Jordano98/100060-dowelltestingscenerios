@@ -2133,6 +2133,9 @@ async function createNewPlaylist() {
       document.getElementById("selectChannel_1").value = "";
       document.getElementById("playlist_title_modal").value = "";
       document.querySelector('input[name="privacy_status"]:checked').value = "";
+
+      //update playlists in playlist field
+       loadUserPlaylist();
     } else if (responseStatus === 409) {
       // Server error message
       const msg = "STATUS: Playlist Already Exists.";
